@@ -79,6 +79,7 @@ namespace FileAnalyzer
                     }
                 }
 
+                Console.WriteLine("Press any key to exit ......");
                 Console.ReadKey();
             }
             catch (Exception ex)
