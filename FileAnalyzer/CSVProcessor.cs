@@ -116,7 +116,24 @@ namespace FileAnalyzer
                                            $"\tItems failed { this.csvDataFile.Errors.Count}");
 
                 logStrStage = "calculating";
-                await this.CalculateMedianAndVarience20Async(this.csvDataFile.FileEntries, this.csvFileReader.GetFilePath());
+                if (this.csvDataFile.FileEntries.Count > 0)
+                {
+                    await this.CalculateMedianAndVarience20Async(this.csvDataFile.FileEntries, this.csvFileReader.GetFilePath());
+                }
+                else
+                {
+                    this.logger.LogInformation(
+                    $"-------------------------------------------\n\n" +
+                    $"File          :'{this.csvFileReader.GetFilePath()} (EMPTY)'\n" +
+                    $"Median        : N/A \n" +
+                    $"Entrites      : 0 \n" +
+                    $"Middle        : N/A \n" +
+                    $"-20 %         : N/A \n" +
+                    $"+20%          : N/A \n" +
+                    $"Left Count    : N/A \n" +
+                    $"Right Count   : N/A \n" +
+                    $"-------------------------------------------\n\n");
+                }
             }
             catch (Exception ex)
             {
@@ -138,30 +155,44 @@ namespace FileAnalyzer
 
             double median = 0.0;
             int leftMiddle = 0;
+            int rightMiddle = 0;
+            int middle = 0;
             if (fileEntriesSorted.Count > 0)
             {
                 if (fileEntriesSorted.Count % 2 == 0)
                 {
                     leftMiddle = (fileEntriesSorted.Count / 2) - 1;
-                    median = (fileEntriesSorted[leftMiddle].Value + fileEntriesSorted[leftMiddle + 1].Value) / 2;
+                    rightMiddle = fileEntriesSorted.Count / 2;
+                    median = (fileEntriesSorted[leftMiddle].Value + fileEntriesSorted[rightMiddle].Value) / 2;
                 }
                 else
                 {
-                    leftMiddle = fileEntriesSorted.Count / 2;
-                    median = fileEntriesSorted[leftMiddle].Value;
+                    middle = fileEntriesSorted.Count / 2;
+                    median = fileEntriesSorted[middle].Value;
                 }
             }
 
             double medianPlus20Percent = median * 1.2;
             double medianMinus20Percent = median * 0.8;
 
-            this.logger.LogInformation($"Median of '{filePath}': {median} (-20 % = {medianMinus20Percent} and +20% = {medianPlus20Percent})");
+            int leftLookup = 0;
+            int rightLookup = 0;
+            if (fileEntriesSorted.Count % 2 == 0)
+            {
+                leftLookup = leftMiddle;
+                rightLookup = rightMiddle;
+            }
+            else
+            {
+                leftLookup = middle - 1;
+                rightLookup = middle + 1;
+            }
 
             // Upper bound entries
             List<CSVFileEntry> upperBoundEntries = new List<CSVFileEntry>();
             await Task.Run(() => this.FindUpperBound(
                 fileEntriesSorted,
-                leftMiddle + 1,
+                rightLookup,
                 fileEntriesSorted.Count - 1,
                 medianPlus20Percent,
                 upperBoundEntries));
@@ -171,14 +202,14 @@ namespace FileAnalyzer
             await Task.Run(() => this.FindLowerBound(
                 fileEntriesSorted,
                 0,
-                leftMiddle,
+                leftLookup,
                 medianMinus20Percent,
                 lowerBoundEntries));
 
             this.logger.LogInformation(
                 $"-------------------------------------------\n\n" +
                 $"File          :'{filePath}'\n" +
-                $"Median        :'{median}': {median}\n" +
+                $"Median        : {median}\n" +
                 $"Entrites      : {fileEntriesSorted.Count}\n" +
                 $"Middle        : {fileEntriesSorted.Count / 2}\n" +
                 $"-20 %         : {medianMinus20Percent}\n" +
