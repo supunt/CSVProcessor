@@ -1,4 +1,4 @@
-﻿// <copyright file="CSVProcessor.cs" company="Supun De Silva">
+﻿// <copyright file="ICSVProcessor.cs" company="Supun De Silva">
 // All rights reserved (C) Supun De Silva 2019
 // </copyright>
 
@@ -19,6 +19,11 @@ namespace FileAnalyzer.Interfaces
         /// Processes the file.
         /// </summary>
         void Process();
+
+        /// <summary>
+        /// Processes the file.
+        /// </summary>
+        Task ProcessAsync();
 
         /// <summary>
         /// Initializes the specified file path.

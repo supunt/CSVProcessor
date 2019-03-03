@@ -22,7 +22,6 @@ namespace FileAnalyzer
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
-            
             try
             {
                 var builder = new ConfigurationBuilder()
@@ -55,7 +54,8 @@ namespace FileAnalyzer
                     ICSVProcessor fp = services.GetService<ICSVProcessor>();
                     fp.Init(item);
 
-                    processingTasks.Add(Task.Run(async () => await Task.Run(() => { fp.Process(); })));
+                    // processingTasks.Add(Task.Run(async () => await Task.Run(() => { fp.Process(); })));
+                    processingTasks.Add(fp.ProcessAsync());
                 }
 
                 Task.WaitAll(processingTasks.ToArray());
