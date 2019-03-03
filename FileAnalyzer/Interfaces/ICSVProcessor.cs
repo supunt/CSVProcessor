@@ -18,11 +18,7 @@ namespace FileAnalyzer.Interfaces
         /// <summary>
         /// Processes the file.
         /// </summary>
-        void Process();
-
-        /// <summary>
-        /// Processes the file.
-        /// </summary>
+        /// <returns>a processing task</returns>
         Task ProcessAsync();
 
         /// <summary>
