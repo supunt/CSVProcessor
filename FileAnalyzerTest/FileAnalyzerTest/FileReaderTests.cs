@@ -14,6 +14,7 @@ namespace FileAnalyzerTest
     {
         private IConfiguration config;
         private ILogger<CSVFileReader> logger;
+        private string folderPath;
 
         [SetUp]
         public void Setup()
@@ -24,6 +25,7 @@ namespace FileAnalyzerTest
 
             this.config = builder.Build();
             this.logger = new Mock<ILogger<CSVFileReader>>().Object;
+            this.folderPath = Directory.GetCurrentDirectory() + $"\\UnitTestFiles\\";
         }
 
         [Test]
@@ -38,11 +40,11 @@ namespace FileAnalyzerTest
         }
 
         [Test]
-        public void ReadWhenFileNameValid()
+        public void ReadValidFile()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
             CSVFileReader fileReader = new CSVFileReader(this.logger);
-            fileReader.Init($"C:\\temp\\files_to_read\\files_to_read\\TOU_1.csv");
+            fileReader.Init(this.folderPath + "TOU_1.csv");
             Assert.DoesNotThrow(() => fileReader.ReadFile());
             Assert.True(fileReader.LinesRead.Count == 8);
         }
@@ -52,7 +54,7 @@ namespace FileAnalyzerTest
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
             CSVFileReader fileReader = new CSVFileReader(this.logger);
-            fileReader.Init($"C:\\temp\\files_to_read\\files_to_read\\TOU_4.csv");
+            fileReader.Init(this.folderPath + "TOU_4.csv");
             Assert.DoesNotThrow(() => fileReader.ReadFile());
             Assert.True(fileReader.LinesRead.Count == 0);
         }
@@ -62,8 +64,18 @@ namespace FileAnalyzerTest
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
             CSVFileReader fileReader = new CSVFileReader(this.logger);
-            fileReader.Init($"C:\\temp\\files_to_read\\files_to_read\\TOU_5.csv");
+            fileReader.Init(this.folderPath + "TOU_5.csv");
             Assert.DoesNotThrow(() => fileReader.ReadFile());
+            Assert.True(fileReader.LinesRead.Count == 0);
+        }
+
+        [Test]
+        public void ReadNonExistingFile()
+        {
+            var mockLogger = new Mock<ILogger<CSVProcessor>>();
+            CSVFileReader fileReader = new CSVFileReader(this.logger);
+            fileReader.Init(this.folderPath + "TOU_51.csv");
+            Assert.Throws(typeof(FileNotFoundException), () => fileReader.ReadFile());
             Assert.True(fileReader.LinesRead.Count == 0);
         }
     }

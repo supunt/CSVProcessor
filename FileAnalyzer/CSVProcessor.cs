@@ -99,6 +99,9 @@ namespace FileAnalyzer
                     var response = await this.CalculateMedianAndVarience20Async(this.csvDataFile);
                     ret.LowerBoundsValues = response.LowerBoundsValues;
                     ret.UpperBoundsValues = response.UpperBoundsValues;
+                    ret.MedianLowerBound = response.MedianLowerBound;
+                    ret.MedianUpperBound = response.MedianUpperBound;
+                    ret.Median = response.Median;
 
                     return ret;
                 }
@@ -183,7 +186,7 @@ namespace FileAnalyzer
                 UpperBoundsValues = upperBoundEntries,
                 Median = median,
                 MedianLowerBound = medianMinus20Percent,
-                MedianUpperBound = medianMinus20Percent,
+                MedianUpperBound = medianPlus20Percent,
             };
         }
 

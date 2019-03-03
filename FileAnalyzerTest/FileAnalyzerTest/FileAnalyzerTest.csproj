@@ -9,6 +9,14 @@
   <ItemGroup>
     <None Remove="appsettings_test.json" />
     <None Remove="appsettings_test_invalid.json" />
+    <None Remove="UnitTestFiles\LP_210095893_20150901T011608049.csv" />
+    <None Remove="UnitTestFiles\LP_AllZeros.csv" />
+    <None Remove="UnitTestFiles\LP_Big.csv" />
+    <None Remove="UnitTestFiles\TOU_1.csv" />
+    <None Remove="UnitTestFiles\TOU_2.csv" />
+    <None Remove="UnitTestFiles\TOU_3.csv" />
+    <None Remove="UnitTestFiles\TOU_4.csv" />
+    <None Remove="UnitTestFiles\TOU_5.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +25,30 @@
     </Content>
     <Content Include="appsettings_test.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\LP_210095893_20150901T011608049.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\LP_Big.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\LP_AllZeros.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\TOU_1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\TOU_2.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\TOU_3.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\TOU_4.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UnitTestFiles\TOU_5.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -29,10 +61,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\FileAnalyzer\FileAnalyzer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UnitTestFiles\" />
   </ItemGroup>
 
 </Project>
