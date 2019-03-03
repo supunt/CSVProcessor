@@ -32,11 +32,9 @@ namespace FileAnalyzer
         /// Initializes a new instance of the <see cref="CSVFileReader" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="appSettings">The application settings.</param>
-        public CSVFileReader(ILogger<CSVFileReader> logger, IConfiguration appSettings)
+        public CSVFileReader(ILogger<CSVFileReader> logger)
         {
             this.logger = logger;
-            this.appSettings = appSettings;
             this.LinesRead = new List<string[]>();
             this.ErrorLines = new List<int>();
         }

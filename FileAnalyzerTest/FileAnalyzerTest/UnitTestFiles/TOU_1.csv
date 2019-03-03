@@ -1,0 +1,9 @@
+MeterPoint Code,Serial Number,Plant Code,Date/Time,Data Type,Energy,Maximum Demand,Time of Max Demand,Units,Status,Period,DLS Active,Billing Reset Count,Billing Reset Date/Time,Rate
+214667141,214667141,ED071500133,1/9/2015 4:00,Export Wh Total,1,0.012,30/12/1899 00:00:00,kwh,.....R....,Total,FALSE,2,1/9/2015 0:00,Unified
+214667141,214667141,ED071500133,1/9/2015 4:00,Export Wh Total,1,0.012,30/12/1899 00:00:00,kwh,.....R....,Total,FALSE,2,1/9/2015 0:00,Rate 1
+214667141,214667141,ED071500133,1/9/2015 0:00,Export Wh Total,2,0.008,30/12/1899 00:00:00,kwh,.....R....,Billing Total,FALSE,2,1/9/2015 0:00,Unified
+214667141,214667141,ED071500133,1/9/2015 0:00,Export Wh Total,2,0.008,30/12/1899 00:00:00,kwh,.....R....,Billing Total,FALSE,2,1/9/2015 0:00,Rate 1
+214667141,214667141,ED071500133,1/9/2015 4:00,Export Wh Total,3,0.004,1/9/2015 0:30,kwh,.....R....,Current,FALSE,2,1/9/2015 0:00,Unified
+214667141,214667141,ED071500133,1/9/2015 4:00,Export Wh Total,3,0.004,1/9/2015 0:30,kwh,.....R....,Current,FALSE,2,1/9/2015 0:00,Rate 1
+214667141,214667141,ED071500133,1/9/2015 0:00,Export Wh Total,4,0.008,27/08/2015 17:30:00,kwh,.....R....,Previous,FALSE,2,1/9/2015 0:00,Unified
+214667141,214667141,ED071500133,1/9/2015 0:00,Export Wh Total,4,0.008,27/08/2015 17:30:00,kwh,.....R....,Previous,FALSE,2,1/9/2015 0:00,Rate 1

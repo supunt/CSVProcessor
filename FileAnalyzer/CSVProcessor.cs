@@ -49,6 +49,7 @@ namespace FileAnalyzer
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="fileReader">The file reader.</param>
+        /// <param name="config">The configuration.</param>
         public CSVProcessor(ILogger<CSVProcessor> logger, ICSVFileReader fileReader, IConfiguration config)
         {
             this.logger = logger;
