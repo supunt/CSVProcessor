@@ -31,7 +31,7 @@ namespace FileAnalyzer
 
                 IConfiguration configuration = builder.Build();
 
-                var services = new ServiceCollection()
+                using (var services = new ServiceCollection()
                                     .AddLogging(logBuilder =>
                                     {
                                         logBuilder.AddConsole();
@@ -41,45 +41,45 @@ namespace FileAnalyzer
                                     .AddTransient<IFolderScanner, FolderScanner>()
                                     .AddTransient<ICSVProcessor, CSVProcessor>()
                                     .AddSingleton(configuration)
-                                    .BuildServiceProvider();
-
-                var logger = services.GetService<ILogger<Program>>();
-
-                logger.LogInformation("CSV reader starting");
-                IFolderScanner fs = services.GetService<IFolderScanner>();
-                List<FoundCSVItem> filesFound = fs.FindCSVFiles();
-
-                List<Task<TaskResult>> processingTasks = new List<Task<TaskResult>>();
-                foreach (FoundCSVItem item in filesFound)
+                                    .BuildServiceProvider())
                 {
-                    ICSVProcessor fp = services.GetService<ICSVProcessor>();
-                    fp.Init(item);
+                    var logger = services.GetService<ILogger<Program>>();
 
-                    processingTasks.Add(fp.ProcessAsync());
-                }
+                    logger.LogInformation("CSV reader starting");
+                    IFolderScanner fs = services.GetService<IFolderScanner>();
+                    List<FoundCSVItem> filesFound = fs.FindCSVFiles();
 
-                Task<TaskResult[]> concatTask = Task.WhenAll(processingTasks.ToArray());
+                    List<Task<TaskResult>> processingTasks = new List<Task<TaskResult>>();
+                    foreach (FoundCSVItem item in filesFound)
+                    {
+                        ICSVProcessor fp = services.GetService<ICSVProcessor>();
+                        fp.Init(item);
 
-                foreach (TaskResult taskResult in concatTask.Result)
-                {
-                    logger.LogDebug(taskResult.ToString());
+                        processingTasks.Add(fp.ProcessAsync());
+                    }
 
-                    logger.LogInformation(
-                    $"------------------------------------------------------\n" +
-                    $"Lower Bound Entries of {taskResult.FileName} (Count : {taskResult.LowerBoundsValues.Count})\n" +
-                    $"------------------------------------------------------\n" +
-                    $"{taskResult.LowerBoundsValues.ToPrintableString(taskResult.FileName, taskResult.Median.ToString())}");
+                    using (Task<TaskResult[]> concatTask = Task.WhenAll(processingTasks.ToArray()))
+                    {
+                        foreach (TaskResult taskResult in concatTask.Result)
+                        {
+                            logger.LogDebug(taskResult.ToString());
 
-                    logger.LogInformation(
-                    $"------------------------------------------------------\n" +
-                    $"Upper Bound Entries of {taskResult.FileName} (Count : {taskResult.UpperBoundsValues.Count})\n" +
-                    $"------------------------------------------------------\n" +
-                    $"{taskResult.UpperBoundsValues.ToPrintableString(taskResult.FileName, taskResult.Median.ToString())}");
+                            logger.LogInformation(
+                            $"------------------------------------------------------\n" +
+                            $"Lower Bound Entries of {taskResult.FileName} (Count : {taskResult.LowerBoundsValues.Count})\n" +
+                            $"------------------------------------------------------\n" +
+                            $"{taskResult.LowerBoundsValues.ToPrintableString(taskResult.FileName, taskResult.Median.ToString())}");
+
+                            logger.LogInformation(
+                            $"------------------------------------------------------\n" +
+                            $"Upper Bound Entries of {taskResult.FileName} (Count : {taskResult.UpperBoundsValues.Count})\n" +
+                            $"------------------------------------------------------\n" +
+                            $"{taskResult.UpperBoundsValues.ToPrintableString(taskResult.FileName, taskResult.Median.ToString())}");
+                        }
+                    }
                 }
 
                 Console.ReadKey();
-                concatTask.Dispose();
-                services.Dispose();
             }
             catch (Exception ex)
             {
