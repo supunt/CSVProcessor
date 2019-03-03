@@ -31,10 +31,10 @@ namespace FileAnalyzerTest
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
             this.config = builder.Build();
 
-            builder = new ConfigurationBuilder()
+            var invalidBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings_test_invalid.json", optional: true, reloadOnChange: true);
-            this.invalidConfig = builder.Build();
+            this.invalidConfig = invalidBuilder.Build();
 
             var mockFrLogger = new Mock<ILogger<CSVFileReader>>();
 

@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings_test.json" />
+    <None Remove="appsettings_test_invalid.json" />
     <None Remove="UnitTestFiles\LP_210095893_20150901T011608049.csv" />
     <None Remove="UnitTestFiles\LP_AllZeros.csv" />
     <None Remove="UnitTestFiles\LP_Big.csv" />
@@ -18,6 +20,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="appsettings_test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings_test_invalid.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="UnitTestFiles\LP_210095893_20150901T011608049.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
