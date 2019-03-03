@@ -19,14 +19,22 @@ namespace FileAnalyzerTest
         private ICSVFileReader emptyFileReader;
         private ICSVFileReader headerOnlyFileReader;
         private string folderPath;
+        private IConfiguration invalidConfig;
 
         [SetUp]
         public void Setup()
         {
             this.folderPath = Directory.GetCurrentDirectory() + $"\\UnitTestFiles\\";
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            this.config = builder.Build();
+
+            builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings_test_invalid.json", optional: true, reloadOnChange: true);
+            this.invalidConfig = builder.Build();
 
             var mockFrLogger = new Mock<ILogger<CSVFileReader>>();
 
@@ -34,11 +42,11 @@ namespace FileAnalyzerTest
             this.emptyFileReader = new CSVFileReader(mockFrLogger.Object);
             this.headerOnlyFileReader = new CSVFileReader(mockFrLogger.Object);
 
-            this.config = builder.Build();
+            
         }
 
         [Test]
-        public async Task ProcessHeaderOnlyFile()
+        public void ProcessHeaderOnlyFile()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
 
@@ -56,7 +64,7 @@ namespace FileAnalyzerTest
         }
 
         [Test]
-        public async Task ProcessEmptyFile()
+        public void ProcessEmptyFile()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
 
@@ -74,7 +82,7 @@ namespace FileAnalyzerTest
         }
 
         [Test]
-        public async Task ProcessKnownResultFile1()
+        public void ProcessKnownResultFile1()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
 
@@ -93,7 +101,7 @@ namespace FileAnalyzerTest
         }
 
         [Test]
-        public async Task ProcessKnownResultFile2AllZeros()
+        public void ProcessKnownResultFile2AllZeros()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
 
@@ -112,7 +120,7 @@ namespace FileAnalyzerTest
         }
 
         [Test]
-        public async Task ProcessKnownResultFile3()
+        public void ProcessKnownResultFile3()
         {
             var mockLogger = new Mock<ILogger<CSVProcessor>>();
 
@@ -128,6 +136,25 @@ namespace FileAnalyzerTest
             Assert.True(result.LowerBoundsValues.Count == 42);
             Assert.True(result.UpperBoundsValues.Count == 59);
             Assert.True(result.Median == 1.89);
+        }
+
+        [Test]
+        public void ProcessKnownResultFileWithInvalidConfig()
+        {
+            var mockLogger = new Mock<ILogger<CSVProcessor>>();
+
+            CSVProcessor processor = new CSVProcessor(mockLogger.Object, this.emptyFileReader, this.invalidConfig);
+            processor.Init(new FoundCSVItem()
+            {
+                FilePath = (this.folderPath + "TOU_1.csv")
+            });
+            TaskResult result = null;
+            Assert.DoesNotThrowAsync(async () => { result = await processor.ProcessAsync(); });
+            Assert.True(result.MedianLowerBound == 0);
+            Assert.True(result.MedianUpperBound == 0);
+            Assert.True(result.LowerBoundsValues.Count == 0);
+            Assert.True(result.UpperBoundsValues.Count == 0);
+            Assert.True(result.Median == 0);
         }
     }
 }
