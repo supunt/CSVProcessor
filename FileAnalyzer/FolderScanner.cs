@@ -9,6 +9,7 @@ namespace FileAnalyzer
     using System.IO;
     using System.Linq;
     using System.Text;
+    using FileAnalyzer.Exceptions;
     using FileAnalyzer.Extensions;
     using FileAnalyzer.Interfaces;
     using FileAnalyzer.Models;
@@ -53,13 +54,20 @@ namespace FileAnalyzer
 
                 List<string> files = Directory.GetFiles(this.folderPath, "*.csv").ToList();
 
-                files.ForEach(x =>
+                foreach (string filePath in files)
                 {
-                    filesFound.Add(new FoundCSVItem()
+                    try
                     {
-                        FilePath = x
-                    });
-                });
+                        filesFound.Add(new FoundCSVItem()
+                        {
+                            FilePath = filePath
+                        });
+                    }
+                    catch (FileTypeException)
+                    {
+                        continue;
+                    }
+                }
 
                 this.logger.LogInformation($"Files found \n {files.ToPrintableString()}");
             }

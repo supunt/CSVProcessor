@@ -20,17 +20,14 @@ namespace FileAnalyzerTest
         [SetUp]
         public void Setup()
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings_test.json", optional: true, reloadOnChange: true);
+            Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
+            mockConfig.Setup(x => x["folderPath"]).Returns(Directory.GetCurrentDirectory() + $"\\UnitTestFiles\\");
+            this.config = mockConfig.Object;
 
-            this.config = builder.Build();
+            Mock<IConfiguration> mockConfigInvalid = new Mock<IConfiguration>();
+            mockConfigInvalid.Setup(x => x["folderPath"]).Returns("C:\\random");
+            this.invalidConfig = mockConfigInvalid.Object;
 
-            builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings_test_invalid.json", optional: true, reloadOnChange: true);
-
-            this.invalidConfig = builder.Build();
             this.logger = new Mock<ILogger<FolderScanner>>().Object;
         }
 
@@ -42,7 +39,7 @@ namespace FileAnalyzerTest
             FolderScanner folderScanner = new FolderScanner(this.logger, this.config);
             List<FoundCSVItem> filesFound = null;
             Assert.DoesNotThrow(() => filesFound = folderScanner.FindCSVFiles());
-            Assert.True(filesFound.Count == 5);
+            Assert.True(filesFound.Count == 8);
         }
 
         [Test]

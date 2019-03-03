@@ -12,18 +12,12 @@ namespace FileAnalyzerTest
 {
     public class FileReaderTests
     {
-        private IConfiguration config;
         private ILogger<CSVFileReader> logger;
         private string folderPath;
 
         [SetUp]
         public void Setup()
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            this.config = builder.Build();
             this.logger = new Mock<ILogger<CSVFileReader>>().Object;
             this.folderPath = Directory.GetCurrentDirectory() + $"\\UnitTestFiles\\";
         }

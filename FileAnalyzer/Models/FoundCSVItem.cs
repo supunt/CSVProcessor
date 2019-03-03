@@ -4,6 +4,7 @@
 
 namespace FileAnalyzer.Models
 {
+    using FileAnalyzer.Exceptions;
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -33,13 +34,17 @@ namespace FileAnalyzer.Models
             set
             {
                 this.filePath = value;
-                if (Utils.GetFileNameFromPath(this.filePath).StartsWith("LP"))
+                if (Utils.GetFileNameFromPath(this.filePath).StartsWith(CSVProviderType.LP.ToString()))
                 {
                     this.ProviderType = CSVProviderType.LP;
                 }
-                else
+                else if (Utils.GetFileNameFromPath(this.filePath).StartsWith(CSVProviderType.TOU.ToString()))
                 {
                     this.ProviderType = CSVProviderType.TOU;
+                }
+                else
+                {
+                    throw new FileTypeException("Unregistered File Type");
                 }
             }
         }
