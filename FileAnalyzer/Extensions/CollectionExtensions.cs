@@ -13,13 +13,23 @@ namespace FileAnalyzer.Extensions
     /// </summary>
     public static class CollectionExtensions
     {
-        public static string ToPrintableString<T>(this List<T> list)
+        public static string ToPrintableString<T>(this List<T> list, string itemPrefix = "", string itemSuffix = "")
         {
             StringBuilder builder = new StringBuilder();
 
+            if (!string.IsNullOrEmpty(itemPrefix))
+            {
+                itemPrefix += " ";
+            }
+
+            if (!string.IsNullOrEmpty(itemSuffix))
+            {
+                itemSuffix = " " + itemSuffix;
+            }
+
             foreach (T item in list)
             {
-                builder.AppendLine(item.ToString());
+                builder.AppendLine($"{itemPrefix}{item.ToString()}{itemSuffix}");
             }
 
             return builder.ToString();

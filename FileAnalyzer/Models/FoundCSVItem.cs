@@ -33,8 +33,7 @@ namespace FileAnalyzer.Models
             set
             {
                 this.filePath = value;
-                string[] pathSplits = this.filePath.Split('\\');
-                if (pathSplits[pathSplits.Length - 1].StartsWith("LP"))
+                if (Utils.GetFileNameFromPath(this.filePath).StartsWith("LP"))
                 {
                     this.ProviderType = CSVProviderType.LP;
                 }

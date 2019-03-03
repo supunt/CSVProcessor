@@ -73,8 +73,13 @@ namespace FileAnalyzer
         /// Processes the asynchronous.
         /// </summary>
         /// <returns>Task</returns>
-        public async Task ProcessAsync()
+        public async Task<TaskResult> ProcessAsync()
         {
+            TaskResult ret = new TaskResult()
+            {
+                FileName = Utils.GetFileNameFromPath(this.csvFileReader.GetFilePath())
+            };
+
             string logStrStage = "reading";
             try
             {
@@ -90,21 +95,11 @@ namespace FileAnalyzer
                 logStrStage = "calculating";
                 if (this.csvDataFile.FileEntries.Count > 0)
                 {
-                    await this.CalculateMedianAndVarience20Async(this.csvDataFile.FileEntries, this.csvFileReader.GetFilePath());
-                }
-                else
-                {
-                    this.logger.LogInformation(
-                    $"-------------------------------------------\n\n" +
-                    $"File          :'{this.csvFileReader.GetFilePath()} (EMPTY)'\n" +
-                    $"Median        : N/A \n" +
-                    $"Entrites      : 0 \n" +
-                    $"Middle        : N/A \n" +
-                    $"-20 %         : N/A \n" +
-                    $"+20%          : N/A \n" +
-                    $"Left Count    : N/A \n" +
-                    $"Right Count   : N/A \n" +
-                    $"-------------------------------------------\n\n");
+                    var response = await this.CalculateMedianAndVarience20Async(this.csvDataFile);
+                    ret.LowerBoundsValues = response.LowerBoundsValues;
+                    ret.UpperBoundsValues = response.UpperBoundsValues;
+
+                    return ret;
                 }
             }
             catch (Exception ex)
@@ -113,17 +108,20 @@ namespace FileAnalyzer
                 this.logger.LogError($"Error {ex.Message}");
                 this.logger.LogError($"StackTrace {ex.StackTrace}");
             }
+
+            return ret;
         }
 
         /// <summary>
         /// Calculates the median and varience20 distributed.
         /// </summary>
-        /// <param name="fileEntries">The file entries.</param>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>Task</returns>
-        private async Task CalculateMedianAndVarience20Async(List<CSVFileEntry> fileEntries, string filePath)
+        /// <param name="csvFile">The CSV file.</param>
+        /// <returns>
+        /// Task
+        /// </returns>
+        private async Task<TaskResult> CalculateMedianAndVarience20Async(CSVFile csvFile)
         {
-            List<CSVFileEntry> fileEntriesSorted = fileEntries.OrderBy(x => x.Value).ToList();
+            List<CSVFileEntry> fileEntriesSorted = csvFile.FileEntries.OrderBy(x => x.Value).ToList();
 
             double median = 0.0;
             int leftMiddle = 0;
@@ -160,15 +158,6 @@ namespace FileAnalyzer
                 rightLookup = middle + 1;
             }
 
-            // Upper bound entries
-            List<CSVFileEntry> upperBoundEntries = new List<CSVFileEntry>();
-            await Task.Run(() => this.FindUpperBound(
-                fileEntriesSorted,
-                rightLookup,
-                fileEntriesSorted.Count - 1,
-                medianPlus20Percent,
-                upperBoundEntries));
-
             // Lower bound entries
             List<CSVFileEntry> lowerBoundEntries = new List<CSVFileEntry>();
             await Task.Run(() => this.FindLowerBound(
@@ -178,17 +167,23 @@ namespace FileAnalyzer
                 medianMinus20Percent,
                 lowerBoundEntries));
 
-            this.logger.LogInformation(
-                $"-------------------------------------------\n\n" +
-                $"File          :'{filePath}'\n" +
-                $"Median        : {median}\n" +
-                $"Entrites      : {fileEntriesSorted.Count}\n" +
-                $"Middle        : {fileEntriesSorted.Count / 2}\n" +
-                $"-20 %         : {medianMinus20Percent}\n" +
-                $"+20%          : {medianPlus20Percent}\n" +
-                $"Left Count    : {lowerBoundEntries.Count}\n" +
-                $"Right Count   : {upperBoundEntries.Count}\n" +
-                $"-------------------------------------------\n\n");
+            // Upper bound entries
+            List<CSVFileEntry> upperBoundEntries = new List<CSVFileEntry>();
+            await Task.Run(() => this.FindUpperBound(
+                fileEntriesSorted,
+                rightLookup,
+                fileEntriesSorted.Count - 1,
+                medianPlus20Percent,
+                upperBoundEntries));
+
+            return new TaskResult()
+            {
+                LowerBoundsValues = lowerBoundEntries,
+                UpperBoundsValues = upperBoundEntries,
+                Median = median,
+                MedianLowerBound = medianMinus20Percent,
+                MedianUpperBound = medianMinus20Percent,
+            };
         }
 
         /// <summary>

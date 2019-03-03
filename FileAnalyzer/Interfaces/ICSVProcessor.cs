@@ -19,7 +19,7 @@ namespace FileAnalyzer.Interfaces
         /// Processes the file.
         /// </summary>
         /// <returns>a processing task</returns>
-        Task ProcessAsync();
+        Task<TaskResult> ProcessAsync();
 
         /// <summary>
         /// Initializes the specified file path.
